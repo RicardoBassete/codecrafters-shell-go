@@ -20,22 +20,6 @@ func parseCmd(str string) cmd {
 	return cmd{name, args}
 }
 
-func handleExit(cmd cmd) {
-	if cmd.name != "exit" {
-		return
-	}
-	code := 0
-	if len(cmd.args) == 1 {
-		var err error
-		code, err = strconv.Atoi(cmd.args[0])
-		if err != nil {
-			fmt.Printf("exit: %s: numeric argument required\n", cmd.args[0])
-			code = 255
-		}
-	}
-	os.Exit(code)
-}
-
 func main() {
 	for {
 		fmt.Fprint(os.Stdout, "$ ")
@@ -51,7 +35,30 @@ func main() {
 }
 
 func run(cmd cmd) {
-	handleExit(cmd)
+	switch cmd.name {
+	case "exit":
+		handleExit(cmd)
+	case "echo":
+		handleEcho(cmd)
+	default:
+		fmt.Fprintf(os.Stderr, "%s: command not found\n", cmd.name)
+	}
+}
 
-	fmt.Fprintf(os.Stderr, "%s: command not found\n", cmd.name)
+func handleExit(cmd cmd) {
+	code := 0
+	if len(cmd.args) == 1 {
+		var err error
+		code, err = strconv.Atoi(cmd.args[0])
+		if err != nil {
+			fmt.Fprintf(os.Stdout, "exit: %s: numeric argument required\n", cmd.args[0])
+			code = 255
+		}
+	}
+	os.Exit(code)
+}
+
+func handleEcho(cmd cmd) {
+	out := strings.Join(cmd.args, " ")
+	fmt.Fprintf(os.Stdout, "%s\n", out)
 }

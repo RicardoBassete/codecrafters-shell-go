@@ -36,12 +36,28 @@ func main() {
 
 func run(cmd cmd) {
 	switch cmd.name {
-	case "exit":
-		handleExit(cmd)
 	case "echo":
 		handleEcho(cmd)
+	case "type":
+		handleType(cmd)
+	case "exit":
+		handleExit(cmd)
 	default:
 		fmt.Fprintf(os.Stderr, "%s: command not found\n", cmd.name)
+	}
+}
+
+func handleType(cmd cmd) {
+	arg := cmd.args[0]
+	switch arg {
+	case "echo":
+		fmt.Fprintln(os.Stdout, "echo is a shell builtin")
+	case "type":
+		fmt.Fprintln(os.Stdout, "type is a shell builtin")
+	case "exit":
+		fmt.Fprintln(os.Stdout, "exit is a shell builtin")
+	default:
+		fmt.Fprintf(os.Stdout, "%s not found\n", arg)
 	}
 }
 

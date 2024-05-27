@@ -6,6 +6,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"github.com/codecrafters-io/shell-starter-go/cmd/myshell/helpers"
 )
 
 type cmd struct {
@@ -57,7 +59,12 @@ func handleType(cmd cmd) {
 	case "exit":
 		fmt.Fprintln(os.Stdout, "exit is a shell builtin")
 	default:
-		fmt.Fprintf(os.Stdout, "%s not found\n", arg)
+		cmdPath, IsOnPath := helpers.IsOnPath(arg)
+		if IsOnPath {
+			fmt.Fprintf(os.Stdout, "%s is %s\n", arg, cmdPath)
+		} else {
+			fmt.Fprintf(os.Stdout, "%s not found\n", arg)
+		}
 	}
 }
 

@@ -46,8 +46,6 @@ func run(cmd cmd) {
 	case "exit":
 		handleExit(cmd)
 	default:
-		// _, IsOnPath := helpers.IsOnPath(cmd.name)
-		// if IsOnPath {
 		command := exec.Command(cmd.name, cmd.args...)
 		command.Stdout = os.Stdout
 		command.Stderr = os.Stderr
@@ -56,9 +54,6 @@ func run(cmd cmd) {
 		if err != nil {
 			fmt.Fprintf(os.Stdout, "%s: command not found\n", cmd.name)
 		}
-		// } else {
-		// 	fmt.Fprintf(os.Stdout, "%s not found\n", cmd.name)
-		// }
 	}
 }
 

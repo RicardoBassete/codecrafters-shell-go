@@ -5,22 +5,16 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"strconv"
 	"strings"
 
-	"github.com/codecrafters-io/shell-starter-go/cmd/myshell/helpers"
+	"github.com/codecrafters-io/shell-starter-go/cmd/myshell/handlers"
 )
 
-type cmd struct {
-	name string
-	args []string
-}
-
-func parseCmd(str string) cmd {
+func parseCmd(str string) handlers.CMD {
 	parts := strings.Fields(str)
 	name := parts[0]
 	args := parts[1:]
-	return cmd{name, args}
+	return handlers.CMD{Name: name, Args: args}
 }
 
 func main() {
@@ -37,72 +31,26 @@ func main() {
 	}
 }
 
-func run(cmd cmd) {
-	switch cmd.name {
+func run(cmd handlers.CMD) {
+	switch cmd.Name {
+	case "cd":
+		handlers.CD(cmd)
 	case "echo":
-		handleEcho(cmd)
+		handlers.ECHO(cmd)
 	case "pwd":
-		handlePwd(cmd)
+		handlers.PWD(cmd)
 	case "type":
-		handleType(cmd)
+		handlers.TYPE(cmd)
 	case "exit":
-		handleExit(cmd)
+		handlers.EXIT(cmd)
 	default:
-		command := exec.Command(cmd.name, cmd.args...)
+		command := exec.Command(cmd.Name, cmd.Args...)
 		command.Stdout = os.Stdout
 		command.Stderr = os.Stderr
 
 		err := command.Run()
 		if err != nil {
-			fmt.Fprintf(os.Stdout, "%s: command not found\n", cmd.name)
+			fmt.Fprintf(os.Stderr, "%s: command not found\n", cmd.Name)
 		}
 	}
-}
-
-func handlePwd(cmd cmd) {
-	dir, err := os.Getwd()
-	if err != nil {
-		fmt.Fprintln(os.Stdout, err)
-	} else {
-		fmt.Fprintln(os.Stdout, dir)
-	}
-}
-
-func handleType(cmd cmd) {
-	arg := cmd.args[0]
-	switch arg {
-	case "echo":
-		fmt.Fprintln(os.Stdout, "echo is a shell builtin")
-	case "pwd":
-		fmt.Fprintln(os.Stdout, "pwd is a shell builtin")
-	case "type":
-		fmt.Fprintln(os.Stdout, "type is a shell builtin")
-	case "exit":
-		fmt.Fprintln(os.Stdout, "exit is a shell builtin")
-	default:
-		cmdPath, IsOnPath := helpers.IsOnPath(arg)
-		if IsOnPath {
-			fmt.Fprintf(os.Stdout, "%s is %s\n", arg, cmdPath)
-		} else {
-			fmt.Fprintf(os.Stdout, "%s not found\n", arg)
-		}
-	}
-}
-
-func handleExit(cmd cmd) {
-	code := 0
-	if len(cmd.args) == 1 {
-		var err error
-		code, err = strconv.Atoi(cmd.args[0])
-		if err != nil {
-			fmt.Fprintf(os.Stdout, "exit: %s: numeric argument required\n", cmd.args[0])
-			code = 255
-		}
-	}
-	os.Exit(code)
-}
-
-func handleEcho(cmd cmd) {
-	out := strings.Join(cmd.args, " ")
-	fmt.Fprintf(os.Stdout, "%s\n", out)
 }

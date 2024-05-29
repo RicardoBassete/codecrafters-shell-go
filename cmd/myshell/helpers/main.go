@@ -6,6 +6,10 @@ import (
 	"strings"
 )
 
+var (
+	BUILTIN_COMMANDS = []string{"echo", "pwd", "type", "exit"}
+)
+
 func IsOnPath(command string) (string, bool) {
 	osPath := os.Getenv("PATH")
 	paths := strings.Split(osPath, ":")
@@ -16,4 +20,13 @@ func IsOnPath(command string) (string, bool) {
 		}
 	}
 	return "", false
+}
+
+func IsBuiltIn(command string) bool {
+	for _, builtin := range BUILTIN_COMMANDS {
+		if command == builtin {
+			return true
+		}
+	}
+	return false
 }

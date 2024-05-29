@@ -10,10 +10,13 @@ import (
 )
 
 type CMD struct {
+	// The command that was typed
 	Name string
+	// Contains the arguments of the command
 	Args []string
 }
 
+// Executes the built-in "cd" command
 func CD(cmd CMD) {
 	target := cmd.Args[0]
 	err := os.Chdir(target)
@@ -22,11 +25,13 @@ func CD(cmd CMD) {
 	}
 }
 
+// Executes the built-in "echo" command
 func ECHO(cmd CMD) {
 	out := strings.Join(cmd.Args, " ")
 	fmt.Fprintf(os.Stdout, "%s\n", out)
 }
 
+// Executes the built-in "type" command
 func TYPE(cmd CMD) {
 	arg := cmd.Args[0]
 
@@ -44,6 +49,7 @@ func TYPE(cmd CMD) {
 	}
 }
 
+// Executes the built-in "pwd" command
 func PWD(cmd CMD) {
 	dir, err := os.Getwd()
 	if err != nil {
@@ -53,6 +59,7 @@ func PWD(cmd CMD) {
 	}
 }
 
+// Executes the built-in "exit" command
 func EXIT(cmd CMD) {
 	code := 0
 	if len(cmd.Args) == 1 {

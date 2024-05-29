@@ -41,6 +41,8 @@ func run(cmd cmd) {
 	switch cmd.name {
 	case "echo":
 		handleEcho(cmd)
+	case "pwd":
+		handlePwd(cmd)
 	case "type":
 		handleType(cmd)
 	case "exit":
@@ -57,11 +59,22 @@ func run(cmd cmd) {
 	}
 }
 
+func handlePwd(cmd cmd) {
+	dir, err := os.Getwd()
+	if err != nil {
+		fmt.Fprintln(os.Stdout, err)
+	} else {
+		fmt.Fprintln(os.Stdout, dir)
+	}
+}
+
 func handleType(cmd cmd) {
 	arg := cmd.args[0]
 	switch arg {
 	case "echo":
 		fmt.Fprintln(os.Stdout, "echo is a shell builtin")
+	case "pwd":
+		fmt.Fprintln(os.Stdout, "pwd is a shell builtin")
 	case "type":
 		fmt.Fprintln(os.Stdout, "type is a shell builtin")
 	case "exit":

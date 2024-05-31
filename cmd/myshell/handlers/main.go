@@ -18,7 +18,21 @@ type CMD struct {
 
 // Executes the built-in "cd" command
 func CD(cmd CMD) {
-	target := cmd.Args[0]
+	var target string
+	isHome := false
+
+	if len(cmd.Args) == 0 {
+		isHome = true // if command has no arguments, set target to home folder
+	} else {
+		isHome = strings.Split(cmd.Args[0], "")[0] == "~" // check for home character
+	}
+
+	if isHome {
+		target = os.Getenv("HOME") // get env variable "HOME"
+	} else {
+		target = cmd.Args[0] // set target to first argument
+	}
+
 	err := os.Chdir(target)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s: No such file or directory\n", target)
